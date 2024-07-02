@@ -28,27 +28,91 @@ renderHeader()
 // ]
 // localStorage.setItem("productList", JSON.stringify(productList));
 let productList = JSON.parse(localStorage.getItem("productList"));
+let itemsPerPage = 3;
+let nowPage = 1;
+let searchResults = [];
 
-function renderData() {
+function sortProducts() {
+    let sortOrder = document.querySelector("#sortOrder").value;
+    let productList = JSON.parse(localStorage.getItem("productList")) || [];
+    if (sortOrder === "alphabetical") {
+        productList.sort((a, b) => {
+            if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+            if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+            return 0;
+        });
+    } else if (sortOrder === "reverseAlphabetical") {
+        productList.sort((a, b) => {
+            if (a.name.toLowerCase() < b.name.toLowerCase()) return 1;
+            if (a.name.toLowerCase() > b.name.toLowerCase()) return -1;
+            return 0;
+        });
+    }
+
+    localStorage.setItem("productList", JSON.stringify(productList));
+    loadPageData();
+}
+document.addEventListener('DOMContentLoaded', function () {
+    let sortOrder = document.querySelector("#sortOrder").value;
+    sortProducts(sortOrder);
+});
+
+function renderData(paginatedItems) {
     let templateStr = ``;
-    for (let i = 0; i < productList.length; i++) {
+    for (let i = 0; i < paginatedItems.length; i++) {
         templateStr += `
-         <tr>
+        <tr>
             <th scope="row">${i + 1}</th>
-             <td>${productList[i].name}</td>
-             <td>${productList[i].categoryName}</td>
-             <td>${productList[i].price}</td>
-            <td>${productList[i].quantity}</td>
-             <td>
-                <button class="btn btn-danger" style="margin: 3px; " onclick="deleteItem(${productList[i].id})">Delete</button>
-                <button class="btn btn-primary" style="margin: 3px; " onclick="edit(${productList[i].id})">Edit</button>
+            <td>${paginatedItems[i].name}</td>
+            <td>${paginatedItems[i].categoryName}</td>
+            <td>${paginatedItems[i].price}</td>
+            <td>${paginatedItems[i].quantity}</td>
+            <td>
+                <button style="margin: 3px;" class="btn btn-danger" onclick="updateStatus(${paginatedItems[i].id})">Delete</button>
+                <button style="margin: 3px;" class="btn btn-primary" onclick="edit(${paginatedItems[i].id})">Edit</button>
             </td>
         </tr>
         `;
     }
     document.querySelector("tbody").innerHTML = templateStr;
 }
-renderData();
+function renderPagination() {
+    let productList = searchResults.length > 0 || document.querySelector('input[type="text"]').value !== "" ? searchResults : JSON.parse(localStorage.getItem("productList")) || [];
+    let totalPages = Math.ceil(productList.length / itemsPerPage);
+    let paginationStr = ``;
+    for (let i = 1; i <= totalPages; i++) {
+        paginationStr += `
+        <button class="btn ${i === nowPage ? `btn-primary` : `btn-secondary`}" onclick="gotoPage(${i})">${i}</button>
+        `;
+    }
+    document.querySelector(".page_list").innerHTML = paginationStr;
+}
+
+function loadPageData() {
+    let productList = searchResults.length > 0 || document.querySelector('input[type="text"]').value !== "" ? searchResults : JSON.parse(localStorage.getItem("productList")) || [];
+    let start = (nowPage - 1) * itemsPerPage;
+    let end = start + itemsPerPage;
+
+    let paginatedItems = productList.slice(start, end);
+    renderPagination();
+    renderData(paginatedItems);
+}
+
+function gotoPage(page) {
+    nowPage = page;
+    loadPageData();
+}
+function search(event) {
+    let inputSearch = event.target.value.toLowerCase();
+    let productList = JSON.parse(localStorage.getItem("productList")) || [];
+    if (inputSearch === "") {
+        searchResults = [];
+    } else {
+        searchResults = productList.filter(product => product.name.toLowerCase().includes(inputSearch));
+    }
+    nowPage = 1;
+    loadPageData();
+}
 
 function getCategory() {
     let categoryList = JSON.parse(localStorage.getItem("categoryList")) || [];
@@ -107,3 +171,4 @@ function deleteItem(x) {
         }
     }
 }
+loadPageData(); 

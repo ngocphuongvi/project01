@@ -44,30 +44,29 @@
         <div class="content_box">
             <h4>Product Management</h4>
             <form>
-                <input type="text" id="searchProduct" placeholder="Product Name">
-                <button class="btn btn-success" onclick="search()">Search</button>
-                <select value="arrange">
-                    <option name="arrange">Arrange</option>
-                    <option name="arrange_by_name" id="arrange_by_name">Arrange by name</option>
-                    <option name="arrange_by_quantity" id="arrange_by_quantity">Arrange by quantity</option>
-                    <option name="arrange_by_category" id="arrange_by_category">Arrange by category</option>
-                </select>
-                <button class="btn btn-success" onclick="arrange()">Arrange</button>
-                <br>
+                <div>
+                    <label>
+                        Search product:</label>
+                    <input oninput="search(event)" type="text" id="searchProduct" placeholder="Product Name">
+                    <label>
+                        Arrange by:</label>
+                    <select id="sortOrder" onchange="sortProducts()">
+                        <option value="alphabetical">Alphabetical Order</option>
+                        <option value="reverseAlphabetical">Reverse Alphabetical Order</option>
+                    </select>
+                </div>
 
-                <form id="addProductForm">
-                    <b>Edit or add product</b><br>
+                <div id="addProductForm">
+                    <label>Edit or add product:</label>
                     <input type="text" id="productName" placeholder="Product Name" required>
                     <div>
-                        Choose category
-                        <select name="categoryName" id="categoryName">
-
-                        </select>
+                        <label> Choose category</label>
+                        <select name="categoryName" id="categoryName"> </select>
                     </div>
                     <input type="text" id="price" placeholder="Price" required>
                     <input type="text" id="quantity" placeholder="Quantity" required>
                     <button onclick="add()" class="btn btn-success">Edit / Add</button>
-                </form>
+                </div>
             </form>
             <table>
                 <thead>
@@ -82,6 +81,7 @@
 
                 </tbody>
             </table>
+            <div class="page_list"></div>
         </div>
     </div>
 

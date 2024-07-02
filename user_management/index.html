@@ -43,22 +43,29 @@
         </div>
         <div class="content_box">
             <h4>User Management</h4>
-            <form>
-                Search user:
-                <input oninput="search(event)" type="text" id="searchUser" placeholder="User Name"> <br>
-                Arrange by:
-                <select id="sortOrder" onchange="sortUsers()">
-                    <option value="alphabetical">alphabetical order</option>
-                    <option value="reverseAlphabetical">reverse alphabetical order</option>
-                </select>
-                <br>
-                <form id="addUserForm">
-                    Edit or add user:
+            <form class="form">
+                <div>
+                    <label>
+                        Search user:
+                    </label>
+                    <input oninput="search(event)" type="text" id="searchUser" placeholder="User Name">
+                    <label>
+                        Arrange by:
+                    </label>
+                    <select id="sortOrder" onchange="sortUsers()">
+                        <option value="alphabetical">Alphabetical Order</option>
+                        <option value="reverseAlphabetical">Reverse Alphabetical Order</option>
+                    </select>
+                </div>
+                <div id="addUserForm">
+                    <label>
+                        Edit or add user:
+                    </label>
                     <input type="text" id="email" placeholder="Email" required>
                     <input type="password" id="password" placeholder="Password" required>
                     <input type="text" id="name" placeholder="Name" required>
                     <button onclick="addUser()" class="btn btn-success">Edit/Add</button>
-                </form>
+                </div>
             </form>
             <table>
                 <thead>

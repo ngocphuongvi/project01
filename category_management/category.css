@@ -58,3 +58,21 @@ td {
 thead {
     background-color: rgb(107, 155, 233);
 }
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+label {
+    font-weight: 550;
+    color: rgb(41, 41, 244);
+}
+
+#addCategoryForm {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 5px;
+}

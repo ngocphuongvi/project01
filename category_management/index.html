@@ -43,24 +43,26 @@
         <div class="content_box">
             <h4>Category Management</h4>
             <form>
-                <input type="text" id="searchCategory" placeholder="Category Name">
-                <button class="btn btn-success" onclick="search()">Search</button>
-                <select value="arrangeCategory">
-                    <option name="arrange">Arrange</option>
-                    <option name="arrange_by_name" id="arrange_by_name">Arrange by name</option>
-                    <option name="arrange_by_quantity" id="arrange_by_quantity">Arrange by quantity</option>
-                    <option name="arrange_by_category" id="arrange_by_category">Arrange by category</option>
-                </select>
-                <button class="btn btn-success" onclick="arrange()">Arrange</button>
-                <br>
+                <div>
+                    <label>
+                        Search Category:
+                    </label>
+                    <input oninput="search(event)" type="text" id="searchCategory" placeholder="Category Name">
+                    <label> Arrange by:</label>
+                    <select id="sortOrder" onchange="sortCategorys()">
+                        <option value="alphabetical">Alphabetical Order</option>
+                        <option value="reverseAlphabetical">Reverse Alphabetical Order</option>
+                    </select>
+                </div>
 
-                <form id="addCategoryForm">
-                    <b>Edit or Add category</b><br>
+                <div id="addCategoryForm">
+                    <label>
+                        Edit or Add category</label>
                     <input type="text" id="categoryName" placeholder="Category Name" required>
                     <input type="text" id="quantity" placeholder="Quantity" required>
                     <input type="text" id="value" placeholder="Value" required>
                     <button onclick="add()" class="btn btn-success">Edit / Add</button>
-                </form>
+                </div>
             </form>
             <table>
                 <thead>
@@ -74,6 +76,7 @@
 
                 </tbody>
             </table>
+            <div class="page_list"></div>
         </div>
     </div>
 
