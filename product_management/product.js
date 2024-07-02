@@ -68,7 +68,7 @@ function renderData(paginatedItems) {
             <td>${paginatedItems[i].price}</td>
             <td>${paginatedItems[i].quantity}</td>
             <td>
-                <button style="margin: 3px;" class="btn btn-danger" onclick="updateStatus(${paginatedItems[i].id})">Delete</button>
+                <button style="margin: 3px;" class="btn btn-danger" onclick="deleteItem(${paginatedItems[i].id})">Delete</button>
                 <button style="margin: 3px;" class="btn btn-primary" onclick="edit(${paginatedItems[i].id})">Edit</button>
             </td>
         </tr>
@@ -166,8 +166,7 @@ function deleteItem(x) {
         if (productList[i].id == x) {
             productList.splice(i, 1);
             localStorage.setItem("productList", JSON.stringify(productList))
-            renderData();
-            break;
+            loadPageData();
         }
     }
 }

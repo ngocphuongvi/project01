@@ -25,29 +25,39 @@ function renderHeader() {
 }
 renderHeader();
 
-let itemsPerPage = 3;
+let itemsPerPage = 3;//mỗi trang hiển thị 3 item
 let nowPage = 1;
-let searchResults = [];
+let searchResults = []; //kết quả tìm kiếm được lưu vào mảng này
 
+//sắp xếp 
 function sortUsers() {
     let sortOrder = document.querySelector("#sortOrder").value;
     let userList = JSON.parse(localStorage.getItem("userList")) || [];
-    if (sortOrder === "alphabetical") {
-        userList.sort((a, b) => {
-            if (a.userName.toLowerCase() < b.userName.toLowerCase()) return -1;
-            if (a.userName.toLowerCase() > b.userName.toLowerCase()) return 1;
-            return 0;
-        });
-    } else if (sortOrder === "reverseAlphabetical") {
-        userList.sort((a, b) => {
-            if (a.userName.toLowerCase() < b.userName.toLowerCase()) return 1;
-            if (a.userName.toLowerCase() > b.userName.toLowerCase()) return -1;
-            return 0;
-        });
-    }
+    let n = userList.length;
 
-    localStorage.setItem("userList", JSON.stringify(userList));
-    loadPageData();
+    if (sortOrder === "none") {
+        userList = JSON.parse(localStorage.getItem("userList"));//không sắp xếp
+    } else {
+        for (let i = 0; i < n - 1; i++) {
+            for (let j = 0; j < n - 1 - i; j++) {//vòng lặp j chạy từ 0 đến`n-1-i` để so sánh và hoán đổi các phần tử liên tiếp nếu cần
+                if (sortOrder === "alphabetical") {//sắp xếp theo thứ tự bảng chữ cái
+                    if (userList[j].userName.toLowerCase() > userList[j + 1].userName.toLowerCase()) {//nếu j đứng sau j+1 trong bảng chữ cái
+                        let temp = userList[j];//hoán đổi giá trị của 2 phần tử
+                        userList[j] = userList[j + 1];
+                        userList[j + 1] = temp;
+                    }
+                } else if (sortOrder === "reverseAlphabetical") {
+                    if (userList[j].userName.toLowerCase() < userList[j + 1].userName.toLowerCase()) {//nếu j đứng trước j+1 trong bảng chữ cái
+                        let temp = userList[j];
+                        userList[j] = userList[j + 1];
+                        userList[j + 1] = temp;
+                    }
+                }
+            }
+        }
+    }
+    localStorage.setItem("userList", JSON.stringify(userList));//lưu lại danh sách người dùng theo thứ tự đã được sắp xếp
+    loadPageData();//tải lại danh sách mỗi trang
 }
 document.addEventListener('DOMContentLoaded', function () {
     let sortOrder = document.querySelector("#sortOrder").value;
@@ -67,7 +77,8 @@ function renderData(paginatedItems) {
             <td>
                 <button style="margin: 3px;" class="btn btn-danger" onclick="updateStatus(${paginatedItems[i].id})">Lock/Unlock</button>
                 <button style="margin: 3px;" class="btn btn-primary" onclick="edit(${paginatedItems[i].id})">Edit</button>
-            </td>
+                <button style="margin: 3px;" class="btn btn-danger" onclick="deleteItem(${paginatedItems[i].id})">Delete</button>
+                </td>
         </tr>
         `;
     }
@@ -102,12 +113,13 @@ function gotoPage(page) {
 }
 
 function search(event) {
-    let inputSearch = event.target.value.toLowerCase();
+    //tim bo qua dau
+    let inputSearch = event.target.value.toLowerCase().normalize();
     let userList = JSON.parse(localStorage.getItem("userList")) || [];
     if (inputSearch === "") {
         searchResults = [];
     } else {
-        searchResults = userList.filter(user => user.userName.toLowerCase().includes(inputSearch));
+        searchResults = userList.filter(user => user.userName.toLowerCase().normalize().includes(inputSearch));
     }
     nowPage = 1;
     loadPageData();
@@ -126,6 +138,7 @@ function updateStatus(id) {
 }
 
 let editId = null;
+
 function addUser() {
     let newUser = {
         id: editId !== null ? editId : Date.now(),
@@ -143,8 +156,13 @@ function addUser() {
         userList.push(newUser);
     }
     localStorage.setItem("userList", JSON.stringify(userList));
-    loadPageData();
     editId = null;
+
+    nowPage = Math.ceil(userList.length / itemsPerPage);
+    gotoPage()
+
+    loadPageData();
+
 }
 
 function edit(Id) {
@@ -159,5 +177,13 @@ function edit(Id) {
         }
     }
 }
-
+function deleteItem(x) {
+    for (let i = 0; i < userList.length; i++) {
+        if (userList[i].id == x) {
+            userList.splice(i, 1);
+            localStorage.setItem("userList", JSON.stringify(userList))
+            loadPageData();
+        }
+    }
+}
 loadPageData(); 

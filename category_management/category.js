@@ -63,7 +63,7 @@ function renderData(paginatedItems) {
             <td>${paginatedItems[i].quantity}</td>
             <td>${paginatedItems[i].value}</td>
             <td>
-                <button style="margin: 3px;" class="btn btn-danger" onclick="updateStatus(${paginatedItems[i].id})">Delete</button>
+                <button style="margin: 3px;" class="btn btn-danger" onclick="deleteItem(${paginatedItems[i].id})">Delete</button>
                 <button style="margin: 3px;" class="btn btn-primary" onclick="edit(${paginatedItems[i].id})">Edit</button>
             </td>
         </tr>
@@ -71,7 +71,7 @@ function renderData(paginatedItems) {
     }
     document.querySelector("tbody").innerHTML = templateStr;
 }
-
+renderData()
 function renderPagination() {
     let categoryList = searchResults.length > 0 || document.querySelector('input[type="text"]').value !== "" ? searchResults : JSON.parse(localStorage.getItem("categoryList")) || [];
     let totalPages = Math.ceil(categoryList.length / itemsPerPage);
@@ -150,8 +150,7 @@ function deleteItem(x) {
         if (categoryList[i].id == x) {
             categoryList.splice(i, 1)
             localStorage.setItem("categoryList", JSON.stringify(categoryList));
-            renderData();
-            break;
+            loadPageData();
         }
     }
 }
