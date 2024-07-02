@@ -59,7 +59,7 @@ function sortUsers() {
     localStorage.setItem("userList", JSON.stringify(userList));//lưu lại danh sách người dùng theo thứ tự đã được sắp xếp
     loadPageData();//tải lại danh sách mỗi trang
 }
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {//đảm bảo mã js chỉ chạy sau khi html đã được tải và cây DOM đã sẵn sàng để thao tác
     let sortOrder = document.querySelector("#sortOrder").value;
     sortUsers(sortOrder);
 });
