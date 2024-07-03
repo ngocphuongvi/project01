@@ -63,7 +63,7 @@ function renderData(paginatedItems) {
             <td>${paginatedItems[i].quantity}</td>
             <td>${paginatedItems[i].value}</td>
             <td>
-                <button style="margin: 3px;" class="btn btn-danger" onclick="deleteItem(${paginatedItems[i].id})">Delete</button>
+                <button style="margin: 3px;" class="btn btn-danger" onclick="updateStatus(${paginatedItems[i].id})">Delete</button>
                 <button style="margin: 3px;" class="btn btn-primary" onclick="edit(${paginatedItems[i].id})">Edit</button>
             </td>
         </tr>
@@ -71,7 +71,7 @@ function renderData(paginatedItems) {
     }
     document.querySelector("tbody").innerHTML = templateStr;
 }
-renderData()
+
 function renderPagination() {
     let categoryList = searchResults.length > 0 || document.querySelector('input[type="text"]').value !== "" ? searchResults : JSON.parse(localStorage.getItem("categoryList")) || [];
     let totalPages = Math.ceil(categoryList.length / itemsPerPage);
@@ -99,12 +99,12 @@ function gotoPage(page) {
     loadPageData();
 }
 function search(event) {
-    let inputSearch = event.target.value.toLowerCase();
+    let inputSearch = event.target.value.toLowerCase().normalize(`NFD`).replace(/[\u0300-\u036f]/g, '').replace(/(\s+)/g, '');
     let categoryList = JSON.parse(localStorage.getItem("categoryList")) || [];
     if (inputSearch === "") {
         searchResults = [];
     } else {
-        searchResults = categoryList.filter(category => category.name.toLowerCase().includes(inputSearch));
+        searchResults = categoryList.filter(category => category.name.toLowerCase().normalize(`NFD`).replace(/[\u0300-\u036f]/g, '').replace(/(\s+)/g, '').includes(inputSearch));
     }
     nowPage = 1;
     loadPageData();
@@ -128,8 +128,8 @@ function add() {
         categoryList.push(newItem);
     }
     localStorage.setItem("categoryList", JSON.stringify(categoryList));
-    renderData();
     editId = null;
+    gotoPage(Math.ceil(categoryList.length / itemsPerPage))
 }
 
 function edit(Id) {
@@ -148,9 +148,11 @@ function edit(Id) {
 function deleteItem(x) {
     for (let i = 0; i < categoryList.length; i++) {
         if (categoryList[i].id == x) {
+            alert("Are you sure you want to delete this category?")
             categoryList.splice(i, 1)
             localStorage.setItem("categoryList", JSON.stringify(categoryList));
-            loadPageData();
+            renderData();
+            break;
         }
     }
 }

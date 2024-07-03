@@ -59,12 +59,6 @@ function sortUsers() {
     localStorage.setItem("userList", JSON.stringify(userList));//lưu lại danh sách người dùng theo thứ tự đã được sắp xếp
     loadPageData();//tải lại danh sách mỗi trang
 }
-document.addEventListener('DOMContentLoaded', function () {//đảm bảo mã js chỉ chạy sau khi html đã được tải và cây DOM đã sẵn sàng để thao tác
-    let sortOrder = document.querySelector("#sortOrder").value;
-    sortUsers(sortOrder);
-});
-
-
 function renderData(paginatedItems) {
     let templateStr = ``;
     for (let i = 0; i < paginatedItems.length; i++) {
@@ -114,12 +108,12 @@ function gotoPage(page) {
 
 function search(event) {
     //tim bo qua dau
-    let inputSearch = event.target.value.toLowerCase().normalize();
+    let inputSearch = event.target.value.toLowerCase().normalize(`NFD`).replace(/[\u0300-\u036f]/g, '').replace(/(\s+)/g, '');
     let userList = JSON.parse(localStorage.getItem("userList")) || [];
     if (inputSearch === "") {
         searchResults = [];
     } else {
-        searchResults = userList.filter(user => user.userName.toLowerCase().normalize().includes(inputSearch));
+        searchResults = userList.filter(user => user.userName.toLowerCase().normalize(`NFD`).replace(/[\u0300-\u036f]/g, '').replace(/(\s+)/g, '').includes(inputSearch));
     }
     nowPage = 1;
     loadPageData();
@@ -147,6 +141,10 @@ function addUser() {
         userName: document.querySelector("#name").value,
         status: true,
     };
+    if (newUser.userName.includes(" ")) {
+        alert("Please do not enter spaces");
+        return;
+    }
     let userList = JSON.parse(localStorage.getItem("userList")) || [];
 
     let index = userList.findIndex((c) => c.id == newUser.id);
@@ -157,12 +155,7 @@ function addUser() {
     }
     localStorage.setItem("userList", JSON.stringify(userList));
     editId = null;
-
-    nowPage = Math.ceil(userList.length / itemsPerPage);
-    gotoPage()
-
-    loadPageData();
-
+    gotoPage(Math.ceil(userList.length / itemsPerPage));
 }
 
 function edit(Id) {
@@ -180,6 +173,7 @@ function edit(Id) {
 function deleteItem(x) {
     for (let i = 0; i < userList.length; i++) {
         if (userList[i].id == x) {
+            alert("Are you sure you want to delete this user?")
             userList.splice(i, 1);
             localStorage.setItem("userList", JSON.stringify(userList))
             loadPageData();

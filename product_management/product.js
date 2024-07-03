@@ -52,10 +52,6 @@ function sortProducts() {
     localStorage.setItem("productList", JSON.stringify(productList));
     loadPageData();
 }
-document.addEventListener('DOMContentLoaded', function () {
-    let sortOrder = document.querySelector("#sortOrder").value;
-    sortProducts(sortOrder);
-});
 
 function renderData(paginatedItems) {
     let templateStr = ``;
@@ -103,12 +99,12 @@ function gotoPage(page) {
     loadPageData();
 }
 function search(event) {
-    let inputSearch = event.target.value.toLowerCase();
+    let inputSearch = event.target.value.toLowerCase().normalize(`NFD`).replace(/[\u0300-\u036f]/g, '').replace(/(\s+)/g, '');
     let productList = JSON.parse(localStorage.getItem("productList")) || [];
     if (inputSearch === "") {
         searchResults = [];
     } else {
-        searchResults = productList.filter(product => product.name.toLowerCase().includes(inputSearch));
+        searchResults = productList.filter(product => product.name.toLowerCase().normalize(`NFD`).replace(/[\u0300-\u036f]/g, '').replace(/(\s+)/g, '').includes(inputSearch));
     }
     nowPage = 1;
     loadPageData();
@@ -136,7 +132,7 @@ function add() {
         price: document.querySelector("#price").value,
         quantity: document.querySelector("#quantity").value,
     };
-
+    let productList = JSON.parse(localStorage.getItem("productList"));
     let index = productList.findIndex((c) => c.id == newItem.id);
     if (index >= 0) {
         productList.splice(index, 1, newItem);
@@ -144,8 +140,9 @@ function add() {
         productList.push(newItem);
     }
     localStorage.setItem("productList", JSON.stringify(productList));
-    renderData();
     editId = null;
+    gotoPage(Math.ceil(productList.length / itemsPerPage));
+
 }
 
 function edit(Id) {
@@ -164,6 +161,7 @@ function edit(Id) {
 function deleteItem(x) {
     for (let i = 0; i < productList.length; i++) {
         if (productList[i].id == x) {
+            alert("Are you sure you want to delete this product?")
             productList.splice(i, 1);
             localStorage.setItem("productList", JSON.stringify(productList))
             loadPageData();
