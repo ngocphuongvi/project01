@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
     sortCategorys(sortOrder);
 });
 
-function renderData(paginatedItems) {
+function renderData(paginatedItems) {//hàm tải dữ liệu cho từng trang nhỏ
     let templateStr = ``;
     for (let i = 0; i < paginatedItems.length; i++) {
         templateStr += `
@@ -72,7 +72,7 @@ function renderData(paginatedItems) {
     document.querySelector("tbody").innerHTML = templateStr;
 }
 
-function renderPagination() {
+function renderPagination() {//hàm tải danh sách số trang và phân biệt trang hiện tại với các trang khác
     let categoryList = searchResults.length > 0 || document.querySelector('input[type="text"]').value !== "" ? searchResults : JSON.parse(localStorage.getItem("categoryList")) || [];
     let totalPages = Math.ceil(categoryList.length / itemsPerPage);
     let paginationStr = ``;
@@ -84,7 +84,7 @@ function renderPagination() {
     document.querySelector(".page_list").innerHTML = paginationStr;
 }
 
-function loadPageData() {
+function loadPageData() {//hàm tải dữ liệu trang
     let categoryList = searchResults.length > 0 || document.querySelector('input[type="text"]').value !== "" ? searchResults : JSON.parse(localStorage.getItem("categoryList")) || [];
     let start = (nowPage - 1) * itemsPerPage;
     let end = start + itemsPerPage;
