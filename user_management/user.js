@@ -115,7 +115,7 @@ function search(event) {
     } else {
         searchResults = userList.filter(user => user.userName.toLowerCase().normalize(`NFD`).replace(/[\u0300-\u036f]/g, '').replace(/(\s+)/g, '').includes(inputSearch));
     }
-    nowPage = 1;
+    // nowPage = 1;
     loadPageData();
 }
 
